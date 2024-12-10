@@ -1,11 +1,11 @@
 import "@mantine/core/styles.css";
-import "./styles/fonts.css";
 import {
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  MetaFunction,
 } from "@remix-run/react";
 import { ColorSchemeScript, MantineProvider, createTheme } from "@mantine/core";
 
@@ -14,6 +14,16 @@ const theme = createTheme({
     "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif",
   fontFamilyMonospace: "SFMono Nerd Font, Menlo, monospace",
 });
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "Milav's Stock Simulator" },
+    {
+      name: "description",
+      content: "Stock simulator app.",
+    },
+  ];
+};
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
