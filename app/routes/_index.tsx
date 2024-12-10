@@ -1,4 +1,7 @@
-import {  redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
+import { Stack, Group, Space, Title, Button } from "@mantine/core";
+import { IconBrandGoogleFilled } from "@tabler/icons-react";
+
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const response = await fetch("http://localhost:3000/user", {
     headers: request.headers,
@@ -7,15 +10,41 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   if (response.ok) {
     return redirect("/home");
-  } else {
-    return null;
   }
+
+  return null;
 };
+
 export default function Index() {
   return (
-    <div>
-      <h1>Home</h1>
-      <a href="http://localhost:3000/login">Sign in</a>
-    </div>
+    <Stack p={20} justify="center">
+      <Group justify="center">
+        <Stack style={{ textAlign: "center" }} justify="center">
+          <Title fw={500} order={1} size="4.5em">
+            Stock Trading,{" "}
+            <span style={{ color: "#3861f6" }}>
+              <em>Risk-Free</em>
+            </span>
+          </Title>
+          <Title order={2} fw={400} size="2em">
+            Practice investing with virtual money using our stock market
+            simulator
+          </Title>
+        </Stack>
+      </Group>
+      <Space h={20} />
+      <Group justify="center">
+        <Button
+          leftSection={<IconBrandGoogleFilled />}
+          component="a"
+          variant="default"
+          radius="lg"
+          size="md"
+          href="http://localhost:3000/login"
+        >
+          Continue with Google
+        </Button>
+      </Group>
+    </Stack>
   );
 }
