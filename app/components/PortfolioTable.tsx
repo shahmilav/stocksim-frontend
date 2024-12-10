@@ -1,8 +1,8 @@
 import {
-  Title,
+  Text,
+  Avatar,
   Button,
   Table,
-  Card,
   useMantineTheme,
   UnstyledButton,
   Group,
@@ -15,6 +15,7 @@ import {
   IconSelector,
   IconArrowUp,
   IconArrowDown,
+  IconMinus,
 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
@@ -28,6 +29,8 @@ interface PortfolioTableProps {
     day_change: number;
     day_change_percent: number;
     purchase_price: number;
+    overall_change: number;
+    category: string;
   }[];
   openTradeModal: () => void;
   setTradeAction: (action: string) => void;
@@ -50,7 +53,7 @@ function Th({ children, sorted, reversed, onSort }: ThProps) {
   return (
     <Table.Th>
       <UnstyledButton onClick={onSort} style={{ width: "100%" }}>
-        <Group position="apart">
+        <Group position="apart" justify="center">
           <Text fw={600} fz="sm">
             {children}
           </Text>
@@ -94,179 +97,255 @@ export default function PortfolioTable({
     );
   };
 
-  const rows = sortedData.map((datum) => (
-    <Table.Tr key={datum.stock_symbol} style={{ fontSize: "1.2em" }}>
-      <Table.Td style={{ fontSize: "1.5em" }}>{datum.stock_symbol}</Table.Td>
-      <Table.Td>
-        {datum.stock_name
-          .replace("Inc", "")
-          .replace("Corp", "")
-          .replace("Corporation", "")}
-      </Table.Td>
-      <Table.Td align="right">{datum.quantity}</Table.Td>
-      <Table.Td align="right">
-        {new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-        }).format(datum.current_price / 100)}
-      </Table.Td>
-      <Table.Td align="right">
-        {new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-        }).format(datum.purchase_price / 100)}
-      </Table.Td>
-      <Table.Td>
-        <div style={{ float: "right", textAlign: "right" }}>
-          {datum.day_change_percent === 0 ? (
-            <span style={{ color: theme.colors.gray[6] }}>
-              {Math.abs(datum.day_change_percent) / 100}%
-              <br />
-              {Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "USD",
-              }).format(0)}
-            </span>
-          ) : datum.day_change > 0 ? (
-            <span
-              style={{
-                color: theme.colors.green[9],
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              {Math.abs(datum.day_change_percent) / 100}% <br />
-              {Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "USD",
-              }).format(Math.abs(datum.quantity * datum.day_change) / 100)}
-              <IconArrowUp size={25} style={{ marginLeft: 5 }} />
-            </span>
-          ) : (
-            <span
-              style={{
-                color: theme.colors.red[9],
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              {Math.abs(datum.day_change_percent) / 100}% <br />
-              {Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "USD",
-              }).format(Math.abs(datum.quantity * datum.day_change) / 100)}
-              <IconArrowDown size={25} style={{ marginLeft: 5 }} />
-            </span>
-          )}
-        </div>
-      </Table.Td>
-      <Table.Td align="right">
-        {new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-        }).format(datum.total_value / 100)}
-      </Table.Td>
-      <Table.Td
-        style={{
-          fontFamily:
-            "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif",
-        }}
-      >
-        <Button
-          size="compact-sm"
-          variant="transparent"
-          onClick={() => {
-            setTradeAction("Buy");
-            setTradeSymbol(datum.stock_symbol);
-            openTradeModal();
+  const rows = sortedData.map((datum) => {
+    const overall = datum.overall_change;
+    const overall_change_percent =
+      Math.round(
+        (overall / (datum.quantity * datum.purchase_price)) * 100 * 100,
+      ) / 100;
+
+    return (
+      <Table.Tr key={datum.stock_symbol} style={{ fontSize: "1.1em" }}>
+        <Table.Td style={{ fontSize: "1.4em" }}>{datum.stock_symbol}</Table.Td>
+        <Table.Td>
+          <Group>
+            <Avatar
+              src={datum.stock_logo_url}
+              alt={datum.stock_symbol + " Logo"}
+            />
+            <Text>
+              {datum.stock_name
+                .replace("Inc", "")
+                .replace("Corp", "")
+                .replace("Corporation", "")}
+            </Text>
+          </Group>
+        </Table.Td>
+        <Table.Td align="right">{datum.quantity}</Table.Td>
+        <Table.Td align="right">
+          {new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+          }).format(datum.current_price / 100)}
+        </Table.Td>
+        <Table.Td align="right">
+          {new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+          }).format(datum.purchase_price / 100)}
+        </Table.Td>
+        <Table.Td>
+          <div style={{ float: "right", textAlign: "right" }}>
+            {datum.day_change_percent === 0 ? (
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  color: theme.colors.gray[6],
+                }}
+              >
+                {Math.abs(datum.day_change_percent) / 100}%
+                <br />
+                {Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                }).format(0)}
+                <IconMinus size={25} style={{ marginLeft: 5 }} />
+              </span>
+            ) : datum.day_change > 0 ? (
+              <span
+                style={{
+                  color: theme.colors.green[9],
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                {Math.abs(datum.day_change_percent) / 100}% <br />
+                {Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                }).format(Math.abs(datum.quantity * datum.day_change) / 100)}
+                <IconArrowUp size={25} style={{ marginLeft: 5 }} />
+              </span>
+            ) : (
+              <span
+                style={{
+                  color: theme.colors.red[9],
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                {Math.abs(datum.day_change_percent) / 100}% <br />
+                {Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                }).format(Math.abs(datum.quantity * datum.day_change) / 100)}
+                <IconArrowDown size={25} style={{ marginLeft: 5 }} />
+              </span>
+            )}
+          </div>
+        </Table.Td>
+        <Table.Td align="right">
+          {new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+          }).format(datum.total_value / 100)}
+        </Table.Td>
+        <Table.Td align="right">
+          <div style={{ float: "right", textAlign: "right" }}>
+            {overall === 0 ? (
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  color: theme.colors.gray[6],
+                }}
+              >
+                {Math.abs(overall_change_percent)}% <br />
+                {Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                }).format(0)}
+                <IconMinus size={25} style={{ marginLeft: 5 }} />
+              </span>
+            ) : overall > 0 ? (
+              <span
+                style={{
+                  color: theme.colors.green[9],
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                {Math.abs(overall_change_percent)}% <br />
+                {Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                }).format(overall / 100)}{" "}
+                <IconArrowUp size={25} style={{ marginLeft: 5 }} />
+              </span>
+            ) : (
+              <span
+                style={{
+                  color: theme.colors.red[9],
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                {Math.abs(overall_change_percent)}% <br />
+                {Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                }).format(Math.abs(overall) / 100)}{" "}
+                <IconArrowDown size={25} style={{ marginLeft: 5 }} />
+              </span>
+            )}
+          </div>
+        </Table.Td>
+        <Table.Td
+          style={{
+            fontFamily:
+              "Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif",
           }}
         >
-          Buy
-        </Button>
-        <br />
-        <Button
-          size="compact-sm"
-          variant="transparent"
-          onClick={() => {
-            setTradeAction("Sell");
-            setTradeSymbol(datum.stock_symbol);
-            openTradeModal();
-          }}
-        >
-          Sell
-        </Button>
-      </Table.Td>
-    </Table.Tr>
-  ));
+          <Button
+            size="compact-sm"
+            variant="transparent"
+            onClick={() => {
+              setTradeAction("Buy");
+              setTradeSymbol(datum.stock_symbol);
+              openTradeModal();
+            }}
+          >
+            Buy
+          </Button>
+          <br />
+          <Button
+            size="compact-sm"
+            variant="transparent"
+            onClick={() => {
+              setTradeAction("Sell");
+              setTradeSymbol(datum.stock_symbol);
+              openTradeModal();
+            }}
+          >
+            Sell
+          </Button>
+        </Table.Td>
+      </Table.Tr>
+    );
+  });
 
   return (
     <>
-      <Title order={2} fw="400">
+      <Text size="xl" mb={10}>
         Your Holdings
-      </Title>
-      <br />
-      <Card shadow="sm" radius="md" withBorder>
-        <Card.Section>
-          <Table.ScrollContainer minWidth={500}>
-            <Table>
-              <Table.Thead>
-                <Table.Tr>
-                  <Th
-                    sorted={sortBy === "stock_symbol"}
-                    reversed={reverseSortDirection}
-                    onSort={() => handleSort("stock_symbol")}
-                  >
-                    Symbol
-                  </Th>
-                  <Th
-                    sorted={sortBy === "stock_name"}
-                    reversed={reverseSortDirection}
-                    onSort={() => handleSort("stock_name")}
-                  >
-                    Description
-                  </Th>
-                  <Th
-                    sorted={sortBy === "quantity"}
-                    reversed={reverseSortDirection}
-                    onSort={() => handleSort("quantity")}
-                  >
-                    Quantity
-                  </Th>
-                  <Th
-                    sorted={sortBy === "current_price"}
-                    reversed={reverseSortDirection}
-                    onSort={() => handleSort("current_price")}
-                  >
-                    Price
-                  </Th>
-                  <Th
-                    sorted={sortBy === "purchase_price"}
-                    reversed={reverseSortDirection}
-                    onSort={() => handleSort("purchase_price")}
-                  >
-                    Purchase
-                  </Th>
-                  <Th
-                    sorted={sortBy === "day_change_percent"}
-                    reversed={reverseSortDirection}
-                    onSort={() => handleSort("day_change_percent")}
-                  >
-                    Today&apos;s Change
-                  </Th>
-                  <Th
-                    sorted={sortBy === "total_value"}
-                    reversed={reverseSortDirection}
-                    onSort={() => handleSort("total_value")}
-                  >
-                    Total Value
-                  </Th>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>{rows}</Table.Tbody>
-            </Table>{" "}
-          </Table.ScrollContainer>
-        </Card.Section>
-      </Card>
+      </Text>
+      <Table.ScrollContainer minWidth={1200}>
+        <Table withTableBorder withColumnBorders striped>
+          <Table.Thead>
+            <Table.Tr>
+              <Th
+                sorted={sortBy === "stock_symbol"}
+                reversed={reverseSortDirection}
+                onSort={() => handleSort("stock_symbol")}
+              >
+                Symbol
+              </Th>
+              <Th
+                sorted={sortBy === "stock_name"}
+                reversed={reverseSortDirection}
+                onSort={() => handleSort("stock_name")}
+              >
+                Description
+              </Th>
+              <Th
+                sorted={sortBy === "quantity"}
+                reversed={reverseSortDirection}
+                onSort={() => handleSort("quantity")}
+              >
+                Quantity
+              </Th>
+              <Th
+                sorted={sortBy === "current_price"}
+                reversed={reverseSortDirection}
+                onSort={() => handleSort("current_price")}
+              >
+                Price
+              </Th>
+              <Th
+                sorted={sortBy === "purchase_price"}
+                reversed={reverseSortDirection}
+                onSort={() => handleSort("purchase_price")}
+              >
+                Purchase
+              </Th>
+              <Th
+                sorted={sortBy === "day_change_percent"}
+                reversed={reverseSortDirection}
+                onSort={() => handleSort("day_change_percent")}
+              >
+                Today&apos;s Change
+              </Th>
+              <Th
+                sorted={sortBy === "total_value"}
+                reversed={reverseSortDirection}
+                onSort={() => handleSort("total_value")}
+              >
+                Total Value
+              </Th>
+              <Th
+                sorted={sortBy === "overall_change"}
+                reversed={reverseSortDirection}
+                onSort={() => handleSort("overall_change")}
+              >
+                Overall P/L
+              </Th>
+              <Table.Th>Trade</Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>{rows}</Table.Tbody>
+        </Table>{" "}
+      </Table.ScrollContainer>
     </>
   );
 }
