@@ -1,6 +1,6 @@
 import {
   Space,
-  Card,
+  Tooltip,
   Title,
   Text,
   Stack,
@@ -27,7 +27,8 @@ export default function AccountData({ data }: unknown) {
           alignItems: "center",
         }}
       >
-       +{Intl.NumberFormat("en-US", {
+        +
+        {Intl.NumberFormat("en-US", {
           style: "currency",
           currency: "USD",
         }).format(data.change / 100)}
@@ -48,51 +49,70 @@ export default function AccountData({ data }: unknown) {
     );
 
   return (
-    <Card shadow="sm" radius="md" withBorder>
+    <Tooltip.Group openDelay={500} closeDelay={100}>
       <Stack spacing="sm">
-        <Text size="xl" mb="-15">
-          Account Value
-        </Text>
+        <Tooltip
+          withArrow
+          arrowPosition="side"
+          inline
+          label="Total value of your cash and investments combined."
+        >
+          <Text size="xl" mb="-15">
+            Account Value
+          </Text>
+        </Tooltip>
         <Title
           style={{
             fontWeight: "400",
           }}
-          order={2}
+          order={1}
         >
           {value}
         </Title>
 
-        <Space h="sm" />
+        <Space visibleFrom="sm" h="sm" />
 
-        <Text size="xl" mb="-15">
-          {" "}
-          Cash
-        </Text>
-
+        <Tooltip
+          withArrow
+          arrowPosition="side"
+          inline
+          label="Uninvested money available to use."
+        >
+          <Text size="xl" mb="-15">
+            {" "}
+            Cash
+          </Text>
+        </Tooltip>
         <Title
           style={{
             fontWeight: "400",
           }}
-          order={2}
+          order={1}
         >
           {cash}
         </Title>
 
-        <Space h="sm" />
+        <Space visibleFrom="sm" h="sm" />
 
-        <Text size="xl" mb="-15">
-          {" "}
-          Today&apos;s Change
-        </Text>
+        <Tooltip
+          withArrow
+          inline
+          label="Net gain or loss in account value today."
+        >
+          <Text size="xl" mb="-15">
+            {" "}
+            Today&apos;s Change
+          </Text>
+        </Tooltip>
         <Title
           style={{
             fontWeight: "400",
           }}
-          order={2}
+          order={1}
         >
           {change}
         </Title>
       </Stack>
-    </Card>
+    </Tooltip.Group>
   );
 }
