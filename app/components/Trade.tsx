@@ -1,5 +1,7 @@
 import {
   Space,
+  Drawer,
+  Modal,
   Group,
   Button,
   Select,
@@ -11,6 +13,7 @@ import {
 } from "@mantine/core";
 import { useState } from "react";
 import { useRevalidator } from "@remix-run/react";
+import TVChart from "app/components/TradingViewChart";
 
 interface TradeProps {
   close: () => void;
@@ -20,7 +23,62 @@ interface TradeProps {
   setAction: (action: string) => void;
 }
 
-export default function Trade({
+interface TradeContainerProps {
+  opened: boolean;
+  close: () => void;
+  symbol: string;
+  setSymbol: (symbol: string) => void;
+  action: string;
+  setAction: (action: string) => void;
+}
+
+export default function TradeContainer({
+  opened,
+  close,
+  symbol,
+  setSymbol,
+  action,
+  setAction,
+}: TradeContainerProps) {
+  return (
+    <>
+      <Modal
+        visibleFrom="sm"
+        opened={opened}
+        onClose={close}
+        radius="md"
+        size="55rem"
+        withCloseButton={false}
+      >
+        <TradeView
+          close={close}
+          symbol={symbol}
+          setSymbol={setSymbol}
+          action={action}
+          setAction={setAction}
+        />
+      </Modal>
+      <Drawer
+        size="100%"
+        opened={opened}
+        onClose={close}
+        position="bottom"
+        withCloseButton={false}
+        hiddenFrom="sm"
+      >
+        <TradeView
+          close={close}
+          symbol={symbol}
+          setSymbol={setSymbol}
+          action={action}
+          setAction={setAction}
+        />
+      </Drawer>
+    </>
+  );
+}
+
+function TradeView({
   close,
   symbol,
   setSymbol,
@@ -30,7 +88,10 @@ export default function Trade({
   const [qty, setQty] = useState<string | number>("");
   const [progressValue, setProgressValue] = useState(0);
 
+  const [err, setErr] = useState("");
   const [showBar, setShowBar] = useState(false);
+
+  const [loading, setLoading] = useState(false); // New state
 
   const revalidator = useRevalidator();
 
@@ -40,12 +101,16 @@ export default function Trade({
     setAction("");
     close();
   }
-  function onSubmit() {
-    setShowBar(true);
 
-    setTimeout(() => {
-      // Send POST request to server
-      fetch("http://localhost:3000/" + action.toLowerCase(), {
+  async function onSubmit() {
+    if (loading) return; // Prevent multiple calls
+    setLoading(true); // Disable button
+    let checker = false;
+
+    // Send POST request to server
+    const response = await fetch(
+      "http://localhost:3000/" + action.toLowerCase(),
+      {
         headers: {
           "Content-Type": "application/json",
         },
@@ -55,10 +120,29 @@ export default function Trade({
           stock_symbol: symbol,
           quantity: qty,
         }),
-      });
+      },
+    );
 
-      setProgressValue(100);
-    }, 100);
+    try {
+      if (response.ok) {
+        console.log("Trade successful!");
+        checker = true;
+      } else {
+        const text = await response.text();
+        console.error(text.replace(/"/g, ""));
+        setErr(text.replace(/"/g, ""));
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
+    if (!checker) {
+      setLoading(false); // Re-enable button if the call failed
+      return;
+    }
+
+    setShowBar(true);
+    setProgressValue(100);
 
     setTimeout(() => {
       // Reset form
@@ -67,6 +151,7 @@ export default function Trade({
       setAction("");
       setProgressValue(0);
       setShowBar(false);
+      setErr("");
 
       // Close modal
       close();
@@ -80,6 +165,13 @@ export default function Trade({
   return (
     <Stack>
       <Title order={3}>Make a Trade</Title>
+      {symbol !== "" ? (
+        <Stack h="250px">
+          <TVChart symbol={symbol.split(" ")[0]} />
+        </Stack>
+      ) : null}
+
+      {err && <div style={{ color: "red" }}>{err}</div>}
       <Select
         data={["Buy", "Sell"]}
         value={action}
@@ -106,14 +198,32 @@ export default function Trade({
         radius="md"
         onChange={setQty}
         label="Quantity"
+        min={0}
+        allowDecimal={false}
+        thousandSeparator=","
         withAsterisk
       />
       <Space h="md" />
-      <Group justify="space-between" grow>
-        <Button variant="default" radius="md" onClick={onSubmit}>
+      <Group>
+        <Button
+          style={{ fontWeight: 500 }}
+          size="compact-lg"
+          color="green"
+          variant="filled"
+          radius="lg"
+          disabled={loading || symbol == "" || qty == 0 || action == ""} // Disable button when loading
+          onClick={onSubmit}
+        >
           Submit
         </Button>
-        <Button variant="default" radius="md" onClick={onCancel}>
+        <Button
+          style={{ fontWeight: 500 }}
+          size="compact-lg"
+          color="red"
+          variant="filled"
+          radius="lg"
+          onClick={onCancel}
+        >
           Cancel
         </Button>
       </Group>
