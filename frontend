@@ -1,0 +1,3 @@
+#!/bin/bash
+pnpm install --prefix /Users/milav/Developer/stocksim/stocksim-frontend
+PORT=5173 pnpm run --prefix /Users/milav/Developer/stocksim/stocksim-frontend start
