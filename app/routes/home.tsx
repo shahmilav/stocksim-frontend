@@ -49,7 +49,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
   const ENV = new Object();
   ENV.SERVER_URL = SERVER_URL;
-  return defer({ portfolio, account, transactions, user,ENV });
+  return defer({ portfolio, account, transactions, user, ENV });
 };
 export default function Home() {
   // Open and close the trade dialog.

@@ -12,7 +12,7 @@ import {
   Progress,
 } from "@mantine/core";
 import { useState } from "react";
-import {useLoaderData, useRevalidator } from "@remix-run/react";
+import { useLoaderData, useRevalidator } from "@remix-run/react";
 import TVChart from "app/components/TradingViewChart";
 
 interface TradeProps {
@@ -110,20 +110,17 @@ function TradeView({
     let checker = false;
 
     // Send POST request to server
-    const response = await fetch(
-      env.SERVER_URL + action.toLowerCase(),
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        method: "POST",
-        body: JSON.stringify({
-          stock_symbol: symbol,
-          quantity: qty,
-        }),
+    const response = await fetch(env.SERVER_URL + "/" + action.toLowerCase(), {
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+      credentials: "include",
+      method: "POST",
+      body: JSON.stringify({
+        stock_symbol: symbol,
+        quantity: qty,
+      }),
+    });
 
     try {
       if (response.ok) {
