@@ -9,13 +9,15 @@ import {
   Button,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { Link } from "@remix-run/react";
+import { useLoaderData, Link } from "@remix-run/react";
 
 interface NavbarProps {
   user: { name: string };
   open: () => void;
 }
 export default function Navbar({ user, open }: NavbarProps) {
+  const env = useLoaderData().ENV;
+  const logout_url = `${env.SERVER_URL}/logout`;
   return (
     <Group m={10} grow>
       <Group justify="flex-start">
@@ -24,7 +26,7 @@ export default function Navbar({ user, open }: NavbarProps) {
             <Avatar name={user.name} color="initials"></Avatar>
           </Popover.Target>
           <Popover.Dropdown>
-            <Link to="http://localhost:3000/logout">Sign out</Link>
+            <Link to={logout_url}>Sign out</Link>
           </Popover.Dropdown>
         </Popover>
         <Title visibleFrom="sm" order={2} fw={500}>
