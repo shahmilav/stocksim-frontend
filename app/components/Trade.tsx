@@ -86,6 +86,8 @@ function TradeView({
   setAction,
 }: TradeProps) {
   const [qty, setQty] = useState<string | number>("");
+  const env = useLoaderData().ENV;
+
   const [progressValue, setProgressValue] = useState(0);
 
   const [err, setErr] = useState("");
@@ -109,7 +111,7 @@ function TradeView({
 
     // Send POST request to server
     const response = await fetch(
-      "http://localhost:3000/" + action.toLowerCase(),
+      env.SERVER_URL + action.toLowerCase(),
       {
         headers: {
           "Content-Type": "application/json",
