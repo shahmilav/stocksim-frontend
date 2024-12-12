@@ -1,4 +1,5 @@
-import { redirect, json, useLoaderData } from "@remix-run/node";
+import { redirect, json } from "@remix-run/node";
+import { LoaderFunctionArgs, useLoaderData } from "@remix-run/react";
 import { Stack, Group, Space, Title, Button } from "@mantine/core";
 import { IconBrandGoogleFilled } from "@tabler/icons-react";
 
