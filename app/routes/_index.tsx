@@ -13,7 +13,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     return redirect("/home");
   }
 
-  return json(ENV: { SERVER_URL });
+  return json({ENV: { SERVER_URL }});
 };
 
 export default function Index() {
