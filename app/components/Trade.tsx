@@ -211,7 +211,7 @@ function TradeView({
           color="green"
           variant="filled"
           radius="lg"
-          disabled={loading || symbol == "" || qty == 0 || action == ""} // Disable button when loading
+          disabled={loading || symbol == "" || qty == 0 || action == ""} // Disable button when loading or when input is invalid.
           onClick={onSubmit}
         >
           Submit

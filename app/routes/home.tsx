@@ -18,9 +18,8 @@ import { Suspense, useState } from "react";
 import { defer, redirect } from "@remix-run/node";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-
   const SERVER_URL = process.env.SERVER_URL || "http://localhost:3000";
-  const response = await fetch(SERVER_URL+"/user", {
+  const response = await fetch(SERVER_URL + "/user", {
     headers: request.headers,
     credentials: "include",
   });
@@ -33,17 +32,17 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     user = await response.json();
   }
 
-  const portfolio = fetch(SERVER_URL+"/portfolio", {
+  const portfolio = fetch(SERVER_URL + "/portfolio", {
     credentials: "include",
     headers: request.headers,
   }).then((res) => res.json());
 
-  const account = fetch(SERVER_URL+"/account", {
+  const account = fetch(SERVER_URL + "/account", {
     credentials: "include",
     headers: request.headers,
   }).then((res) => res.json());
 
-  const transactions = fetch(SERVER_URL+"/transactions", {
+  const transactions = fetch(SERVER_URL + "/transactions", {
     credentials: "include",
     headers: request.headers,
   }).then((res) => res.json());

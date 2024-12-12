@@ -5,7 +5,7 @@ import { IconBrandGoogleFilled } from "@tabler/icons-react";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const SERVER_URL = process.env.SERVER_URL || "http://localhost:3000";
-  const response = await fetch(SERVER_URL+"/user", {
+  const response = await fetch(SERVER_URL + "/user", {
     headers: request.headers,
     credentials: "include",
   });
@@ -14,7 +14,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     return redirect("/home");
   }
 
-  return json({ENV: { SERVER_URL }});
+  return json({ ENV: { SERVER_URL } });
 };
 
 export default function Index() {
