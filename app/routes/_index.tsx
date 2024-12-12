@@ -3,6 +3,7 @@ import { Stack, Group, Space, Title, Button } from "@mantine/core";
 import { IconBrandGoogleFilled } from "@tabler/icons-react";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const SERVER_URL = process.env.SERVER_URL || "http://localhost:3000";
   const response = await fetch("http://localhost:3000/user", {
     headers: request.headers,
     credentials: "include",
@@ -12,10 +13,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     return redirect("/home");
   }
 
-  return null;
+  return json(ENV: { SERVER_URL });
 };
 
 export default function Index() {
+  const ENV = useLoaderData().ENV;
   return (
     <Stack p={20} justify="center">
       <Group justify="center">
@@ -40,7 +42,7 @@ export default function Index() {
           variant="default"
           radius="lg"
           size="md"
-          href="http://localhost:3000/login"
+          href={`${ENV.SERVER_URL}/login`}
         >
           Continue with Google
         </Button>
