@@ -12,7 +12,7 @@ import {
   Progress,
 } from "@mantine/core";
 import { useState } from "react";
-import { useRevalidator } from "@remix-run/react";
+import {useLoaderData, useRevalidator } from "@remix-run/react";
 import TVChart from "app/components/TradingViewChart";
 
 interface TradeProps {
