@@ -1,4 +1,5 @@
-# Frontend for Stock Simulator
+# FRONTEND FOR STOCKSIMULATOR
 
-DEV: `pnpm run dev`
-RUN: `./frontend`
+Visit [stocksimulator.xyz](http://stocksimulator.xyz) to try yourself!
+
+
