@@ -1,6 +1,6 @@
 import { redirect, json } from "@remix-run/node";
 import { LoaderFunctionArgs, useLoaderData } from "@remix-run/react";
-import { Stack, Group, Space, Title, Button } from "@mantine/core";
+import { Stack, Group, Space, Title, Button, Text } from "@mantine/core";
 import { IconBrandGoogleFilled } from "@tabler/icons-react";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -30,7 +30,7 @@ export default function Index() {
             </span>
           </Title>
           <Title order={2} fw={400} size="2em">
-            Practice investing with virtual money using our stock market
+            Practice investing with virtual fake money using our stock market
             simulator
           </Title>
         </Stack>
@@ -47,6 +47,12 @@ export default function Index() {
         >
           Continue with Google
         </Button>
+      </Group>
+      <Group justify="center">
+        <Text align="center" color="red.6">
+          <strong>Disclaimer: This site is in beta.</strong> <br />
+          You may lose your data at any time.
+        </Text>
       </Group>
     </Stack>
   );

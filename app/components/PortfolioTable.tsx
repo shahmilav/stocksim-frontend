@@ -9,6 +9,7 @@ import {
   Center,
   Text,
 } from "@mantine/core";
+import { Link } from "@remix-run/react";
 import {
   IconChevronDown,
   IconChevronUp,
@@ -106,7 +107,11 @@ export default function PortfolioTable({
 
     return (
       <Table.Tr key={datum.stock_symbol} style={{ fontSize: "1.1em" }}>
-        <Table.Td style={{ fontSize: "1.4em" }}>{datum.stock_symbol}</Table.Td>
+        <Table.Td style={{ fontSize: "1.4em" }}>
+          <Link to={"/research/search?tvwidgetsymbol=" + datum.stock_symbol}>
+            {datum.stock_symbol}
+          </Link>
+        </Table.Td>
         <Table.Td>
           <Group>
             <Avatar

@@ -2,13 +2,11 @@ import {
   Title,
   Space,
   Popover,
-  Burger,
   Avatar,
   Text,
   Group,
   Button,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { useLoaderData, Link } from "@remix-run/react";
 
 interface NavbarProps {
@@ -38,6 +36,13 @@ export default function Navbar({ user, open }: NavbarProps) {
         <Text visibleFrom="sm" order={1} fw="400">
           Welcome, {user.name.split(" ")[0]}
         </Text>
+        <Link visibleFrom="sm" to="/home">
+          Portfolio
+        </Link>
+        <Link visibleFrom="sm" to="/research">
+          Research
+        </Link>
+
         <Button
           radius="lg"
           style={{ fontWeight: 500 }}
